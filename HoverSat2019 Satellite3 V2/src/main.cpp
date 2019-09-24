@@ -24,8 +24,8 @@
 //------------------------------------------------------------------//
 #define   TIMER_INTERRUPT     10      // ms
 #define   LCD
-#define   ONE_ROTATION_LENGTH 230
-#define   REDUCTION_RATIO 6.25
+#define   ONE_ROTATION_LENGTH 78.5
+#define   REDUCTION_RATIO 1.875
 
 // Motor steps per revolution. Most steppers are 200 steps or 1.8 degrees/step
 #define MOTOR_STEPS 400
@@ -368,6 +368,9 @@ void loop() {
         DuctedFan.write(0);
         break;
       }
+      M5.Lcd.setCursor(180, 100);
+      M5.Lcd.clear();
+      M5.Lcd.println(60 - current_time);
       bts.println( 60 - current_time );
       break;
 
@@ -377,6 +380,9 @@ void loop() {
         break;
       }
       bts.println( 60 - current_time + 60 );
+      M5.Lcd.setCursor(180, 100);
+      M5.Lcd.clear();
+      M5.Lcd.println(60 - current_time);
       break;
 
     case 113:    
@@ -388,6 +394,9 @@ void loop() {
         pattern = 122;
         break;
       }    
+      M5.Lcd.setCursor(180, 100);
+      M5.Lcd.clear();
+      M5.Lcd.println(60 - current_time);
       bts.println( 60 - current_time );
       break;
 
@@ -413,16 +422,22 @@ void loop() {
     case 115:   
       time_stepper = time_ms;
       digitalWrite( Stepper_Enable_Pin, 0);
-      stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
-      stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
-      stepper.move(ex_length*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+      if( dir_flag == 1 ){
+        stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+        stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+        stepper.move(ex_length*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+      } else {
+        stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+        stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+        stepper.move(ex_length*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH*-1);
+      }
       time_buff2 = millis();
       pattern = 116;
       break;
 
     case 116:   
       if( millis() - time_buff2 >= wait*1000 ) {
-        pattern = 117;
+        pattern = 118;
         break;
       }
       break;
@@ -471,7 +486,14 @@ void loop() {
   } else if (M5.BtnB.wasPressed() && pattern == 0) {  
     pattern = 11;
   } else if (M5.BtnC.wasPressed() && pattern == 0) { 
-    pattern = 21;
+    M5.Lcd.clear();
+    M5.Lcd.setCursor(82, 100);
+    M5.Lcd.println("Sequence");
+    if( current_time >= 52 ) {   
+      pattern = 112;
+    } else {
+      pattern = 111;
+    }
   }
 
  
