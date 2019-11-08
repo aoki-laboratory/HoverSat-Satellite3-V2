@@ -106,10 +106,10 @@ int bts_index = 0;
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-//char ssid[] = "Buffalo-G-0CBA";
-//char pass[] = "hh4aexcxesasx";
-char ssid[] = "X1Extreme-Hotspot";
-char pass[] = "5]6C458w";
+char ssid[] = "Buffalo-G-0CBA";
+char pass[] = "hh4aexcxesasx";
+//char ssid[] = "X1Extreme-Hotspot";
+//char pass[] = "5]6C458w";
 //char ssid[] = "Macaw";
 //char pass[] = "1234567890";
 
@@ -207,22 +207,6 @@ void setup() {
   M5.Lcd.setTextSize(3);
   M5.Lcd.setTextColor(GREEN ,BLACK);
   M5.Lcd.fillScreen(BLACK);
-
-  /*
-  switch( ssid_pattern ) {
-      case 0:
-        ssid_buff = "Buffalo-G-0CBA";
-        pass_buff = "hh4aexcxesasx";
-        break;
-
-      case 1:
-        ssid_buff = "Macaw";
-        pass_buff = "1234567890";
-        break;
-  }
-  ssid = ssid_buff.c_str();
-  pass = pass_buff.c_str();
-  */
 
   Serial.begin(115200);
   bts.begin("M5Stack Satellite3");
