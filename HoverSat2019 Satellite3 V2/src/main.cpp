@@ -44,6 +44,15 @@ BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 
 #define BufferRecords 16
 
+#define NOOFPATTERNS  3
+
+int parameters[NOOFPATTERNS][5] =
+{
+  {1000, 100, 100, 100, 10000 },
+  {1000, 200, 100, 400, 10000 },
+  {1000, 400, 100, 800, 10000 }
+};
+
 
 
 //Global
@@ -106,10 +115,10 @@ int bts_index = 0;
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-char ssid[] = "Buffalo-G-0CBA";
-char pass[] = "hh4aexcxesasx";
-//char ssid[] = "X1Extreme-Hotspot";
-//char pass[] = "5]6C458w";
+//char ssid[] = "Buffalo-G-0CBA";
+//char pass[] = "hh4aexcxesasx";
+char ssid[] = "X1Extreme-Hotspot";
+char pass[] = "5]6C458w";
 //char ssid[] = "Macaw";
 //char pass[] = "1234567890";
 
@@ -162,9 +171,13 @@ unsigned char hover_val = 0;
 unsigned int ex_length = 2000;
 unsigned int ex_velocity = 200;
 unsigned int ex_accel = 5;
+unsigned int ex_decel = 5;
 unsigned char wait = 5;
 unsigned char dir_flag = 1;
 unsigned char ssid_pattern = 0;
+unsigned char patternNo = 0;
+
+
 
 
 
@@ -200,12 +213,15 @@ void setup() {
   M5.Lcd.setCursor(82, 200);
   M5.Lcd.println("Satellite3");
 
-  eeprom_read();
+  //eeprom_read();
+  ex_length = parameters[0][0];
+  ex_velocity = parameters[0][1];
+  ex_accel = parameters[0][2];
+  ex_decel = parameters[0][3];
   
   delay(1000);
 
   M5.Lcd.setTextSize(3);
-  M5.Lcd.setTextColor(GREEN ,BLACK);
   M5.Lcd.fillScreen(BLACK);
 
   Serial.begin(115200);
@@ -468,7 +484,16 @@ void loop() {
       DuctedFan.detach();
     } 
   } else if (M5.BtnB.wasPressed() && pattern == 0) {  
-    pattern = 11;
+    patternNo++;
+    M5.Lcd.fillScreen(BLACK);
+    if( patternNo >= NOOFPATTERNS ) {
+      patternNo = 0;
+    }
+    ex_length = parameters[patternNo][0];
+    ex_velocity = parameters[patternNo][1];
+    ex_accel = parameters[patternNo][2];
+    ex_decel = parameters[patternNo][3];
+    
   } else if (M5.BtnC.wasPressed() && pattern == 0) { 
     M5.Lcd.clear();
     M5.Lcd.setCursor(82, 100);
@@ -519,12 +544,61 @@ void Timer_Interrupt( void ){
     switch( iTimer10 ) {
     case 1:
       if(hover_flag) {
-        M5.Lcd.fillScreen(BLACK);
-        M5.Lcd.setCursor(140, 105);
-        M5.Lcd.println(hover_val);
+        //M5.Lcd.fillScreen(BLACK);
+        M5.Lcd.fillRect(0, 0, 80, 80, TFT_WHITE);
+        M5.Lcd.fillRect(80, 0, 240, 80, TFT_DARKGREY);
+        M5.Lcd.fillRect(0, 80, 80, 160, TFT_DARKGREY);
+        M5.Lcd.setTextSize(5);
+        M5.Lcd.setCursor(13, 23);
+        M5.Lcd.setTextColor(BLACK);
+        M5.Lcd.print("S3");
+        M5.Lcd.setTextSize(3);
+        M5.Lcd.setCursor(96, 30);
+        M5.Lcd.setTextColor(WHITE);
+        M5.Lcd.printf("DctF     %3d", hover_val);
+        M5.Lcd.setCursor(15, 120);
+        M5.Lcd.print("No.");
+        M5.Lcd.setTextSize(5);
+        M5.Lcd.setCursor(28, 160);
+        M5.Lcd.print(patternNo+1);
+
+        M5.Lcd.setTextSize(2);
+        M5.Lcd.setCursor(96, 92);
+        M5.Lcd.printf("Move Length   %4d", parameters[patternNo][0]);
+        M5.Lcd.setCursor(96, 132);
+        M5.Lcd.printf("Acceleration  %4d", parameters[patternNo][1]);
+        M5.Lcd.setCursor(96, 172);
+        M5.Lcd.printf("Velocity      %4d", parameters[patternNo][2]);
+        M5.Lcd.setCursor(96, 212);
+        M5.Lcd.printf("Deceleration  %4d", parameters[patternNo][3]);
       } else {
-        M5.Lcd.setCursor(100, 105);
-        M5.Lcd.println("Disable");
+        M5.Lcd.fillRect(0, 0, 80, 80, TFT_WHITE);
+        M5.Lcd.fillRect(80, 0, 240, 80, TFT_DARKGREY);
+        M5.Lcd.fillRect(0, 80, 80, 160, TFT_DARKGREY);
+        M5.Lcd.setTextSize(5);
+        M5.Lcd.setCursor(13, 23);
+        M5.Lcd.setTextColor(BLACK);
+        M5.Lcd.print("S3");
+        M5.Lcd.setTextSize(3);
+        M5.Lcd.setCursor(96, 30);
+        M5.Lcd.setTextColor(WHITE);
+        M5.Lcd.print("DctF Disable");
+        M5.Lcd.setCursor(15, 120);
+        M5.Lcd.print("No.");
+        M5.Lcd.setTextSize(5);
+        M5.Lcd.setCursor(28, 160);
+        M5.Lcd.print(patternNo+1);
+
+        M5.Lcd.setTextSize(2);
+        M5.Lcd.setCursor(96, 92);
+        M5.Lcd.printf("Move Length   %4d", parameters[patternNo][0]);
+        M5.Lcd.setCursor(96, 132);
+        M5.Lcd.printf("Acceleration  %4d", parameters[patternNo][1]);
+        M5.Lcd.setCursor(96, 172);
+        M5.Lcd.printf("Velocity      %4d", parameters[patternNo][2]);
+        M5.Lcd.setCursor(96, 212);
+        M5.Lcd.printf("Deceleration  %4d", parameters[patternNo][3]);
+
       }
     break;
 
