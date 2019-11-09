@@ -48,6 +48,7 @@ BasicStepperDriver stepper(MOTOR_STEPS, DIR, STEP);
 
 int parameters[NOOFPATTERNS][5] =
 {
+// Accel, Velocity, Decel, TIme
   {1000, 100, 100, 100, 10000 },
   {1000, 200, 100, 400, 10000 },
   {1000, 400, 100, 800, 10000 }
@@ -167,7 +168,7 @@ hw_timer_t * timer = NULL;
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 
 // Parameters
-unsigned char hover_val = 0;
+unsigned char hover_val = 70;
 unsigned int ex_length = 2000;
 unsigned int ex_velocity = 200;
 unsigned int ex_accel = 5;
@@ -327,7 +328,7 @@ void loop() {
 
     case 11:    
       digitalWrite( Stepper_Enable_Pin, 0);
-      stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+      stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_decel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
       stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
       stepper.move(ex_length*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH); 
       time_buff2 = millis();
@@ -343,7 +344,7 @@ void loop() {
 
       case 21:    
       digitalWrite( Stepper_Enable_Pin, 0);
-      stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+      stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_decel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
       stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
       stepper.move((ex_length+300)*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH*-1); 
       time_buff2 = millis();
@@ -423,11 +424,11 @@ void loop() {
       time_stepper = time_ms;
       digitalWrite( Stepper_Enable_Pin, 0);
       if( dir_flag == 1 ){
-        stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+        stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_decel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
         stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
         stepper.move(ex_length*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
       } else {
-        stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+        stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_decel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
         stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
         stepper.move(ex_length*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH*-1);
       }
@@ -444,7 +445,7 @@ void loop() {
 
     case 117:
       digitalWrite( Stepper_Enable_Pin, 0);
-      stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
+      stepper.setSpeedProfile(stepper.LINEAR_SPEED, ex_accel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH, ex_decel*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
       stepper.setRPM(ex_velocity*60*REDUCTION_RATIO/ONE_ROTATION_LENGTH);
       stepper.move((ex_length+300)*MOTOR_STEPS*REDUCTION_RATIO/ONE_ROTATION_LENGTH*-1);
       digitalWrite( Stepper_Enable_Pin, 1);
@@ -497,7 +498,6 @@ void loop() {
   } else if (M5.BtnC.wasPressed() && pattern == 0) { 
     M5.Lcd.clear();
     M5.Lcd.setCursor(82, 100);
-    M5.Lcd.println("Sequence");
     if( current_time >= 52 ) {   
       pattern = 112;
     } else {
