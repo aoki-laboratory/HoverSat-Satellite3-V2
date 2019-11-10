@@ -564,7 +564,7 @@ void Timer_Interrupt( void ){
         M5.Lcd.print("No.");
         M5.Lcd.setTextSize(5);
         M5.Lcd.setCursor(28, 160);
-        M5.Lcd.print(patternNo+1);
+        M5.Lcd.printf("%2d", patternNo+1);
 
         M5.Lcd.setTextSize(2);
         M5.Lcd.setCursor(96, 92);
@@ -590,8 +590,8 @@ void Timer_Interrupt( void ){
         M5.Lcd.setCursor(15, 120);
         M5.Lcd.print("No.");
         M5.Lcd.setTextSize(5);
-        M5.Lcd.setCursor(28, 160);
-        M5.Lcd.print(patternNo+1);
+        M5.Lcd.setCursor(18, 160);
+        M5.Lcd.printf("%2d", patternNo+1);
 
         M5.Lcd.setTextSize(2);
         M5.Lcd.setCursor(96, 92);
