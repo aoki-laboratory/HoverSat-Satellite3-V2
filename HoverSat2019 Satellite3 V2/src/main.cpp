@@ -116,10 +116,10 @@ int bts_index = 0;
 
 // Your WiFi credentials.
 // Set password to "" for open networks.
-//char ssid[] = "Buffalo-G-0CBA";
-//char pass[] = "hh4aexcxesasx";
-char ssid[] = "X1Extreme-Hotspot";
-char pass[] = "5]6C458w";
+char ssid[] = "Buffalo-G-0CBA";
+char pass[] = "hh4aexcxesasx";
+//char ssid[] = "X1Extreme-Hotspot";
+//char pass[] = "5]6C458w";
 //char ssid[] = "Macaw";
 //char pass[] = "1234567890";
 
@@ -503,6 +503,10 @@ void loop() {
     } else {
       pattern = 111;
     }
+  } else if (M5.BtnB.pressedFor(2000)) {
+    pattern = 11;
+  } else if (M5.BtnC.pressedFor(2000)) {
+    pattern = 21;
   }
 
  
